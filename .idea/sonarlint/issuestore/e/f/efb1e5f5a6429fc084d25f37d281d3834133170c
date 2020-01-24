@@ -1,0 +1,9 @@
+
+`squid:S2094!"BRemove this empty class, write its code or make it an "interface".(ç†ä§8ˆ‹÷¬÷-
+Ksquid:S1068"-Remove this unused "timestamp" private field.(„¶†8ïö¬÷-
+Ksquid:S1068"-Remove this unused "requestId" private field.(¡’Õ8“™ï¬÷-
+Vsquid:S1068	"3Remove this unused "generationCount" private field.(œæ‘ÿÿÿÿÿ8“™ï¬÷-
+Ksquid:S1068"(Remove this unused "host" private field.(Ø¦øİûÿÿÿÿ8ïö¬÷-
+Ksquid:S1068"-Remove this unused "userAgent" private field.(ñ«ˆİ8ïö¬÷-
+Osquid:S1068
+",Remove this unused "duration" private field.(–Üáşÿÿÿÿ8“™ï¬÷-
