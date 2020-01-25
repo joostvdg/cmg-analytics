@@ -8,6 +8,7 @@ import java.util.*;
 
 @RegisterForReflection
 public class GenerationRequest {
+
     private String requestId;
     private long generationCount;
     private long duration;
