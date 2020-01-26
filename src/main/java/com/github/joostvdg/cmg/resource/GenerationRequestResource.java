@@ -1,6 +1,7 @@
 package com.github.joostvdg.cmg.resource;
 
 import com.github.joostvdg.cmg.analytics.GenerationRequest;
+import com.github.joostvdg.cmg.analytics.Tables;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -30,8 +31,13 @@ public class GenerationRequestResource {
     @Get
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse generationRequestDemo() {
-//        DSLContext dslContext = DSL.using(connection, SQLDialect.POSTGRES);
-        dslContext.query("select * from generationrequests;");
+
+        int count = dslContext
+            .selectCount()
+            .from(Tables.GENERATIONREQUESTS)
+            .fetchOne(0, int.class);
+        LOG.info("Found " + count + " records");
+
 
         var generationRequest = new GenerationRequest.Builder()
             .generationCount(100)

@@ -1,1 +1,1 @@
-mvn exec:exec
+mvn clean compile exec:exec
