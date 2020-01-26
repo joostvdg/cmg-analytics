@@ -1,24 +1,38 @@
 package com.github.joostvdg.cmg.resource;
 
 import com.github.joostvdg.cmg.analytics.GenerationRequest;
-import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.jboss.logging.Logger;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.*;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
-@Path("/generationRequest")
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Controller("/generationRequest")
 public class GenerationRequestResource {
 
-    private static final Logger LOG = Logger.getLogger(GenerationRequestResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenerationRequestResource.class);
 
-    @GET
+    protected final DSLContext dslContext;
+
+    public GenerationRequestResource(DSLContext dslContext) {
+        this.dslContext = dslContext;
+    }
+
+    @Get
     @Produces(MediaType.APPLICATION_JSON)
-    public Response generationRequestDemo() {
+    public HttpResponse generationRequestDemo() {
+//        DSLContext dslContext = DSL.using(connection, SQLDialect.POSTGRES);
+        dslContext.query("select * from generationrequests;");
+
         var generationRequest = new GenerationRequest.Builder()
             .generationCount(100)
             .duration(100)
@@ -30,17 +44,18 @@ public class GenerationRequestResource {
             .userAgent("MeMyselfAndI")
             .parameters(Collections.emptyList())
             .build();
-        return Response.ok(generationRequest, MediaType.APPLICATION_JSON_TYPE).build();
+
+        return HttpResponse.ok().contentType(MediaType.APPLICATION_JSON_TYPE).body(generationRequest);
     }
 
-    @POST
+    @Post
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response receiveGenerationRequest(@RequestBody GenerationRequest generationRequest) {
+    public HttpResponse receiveGenerationRequest(@Body GenerationRequest generationRequest) {
         if (generationRequest == null ) {
-            LOG.infof("Request failed, no content");
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "No valid object").build();
+            LOG.info("Request failed, no content");
+            return HttpResponse.status(HttpStatus.BAD_REQUEST, "No valid object");
         }
-        LOG.infof("Request received: %s", generationRequest.toString());
-        return Response.noContent().build();
+        LOG.info("Request received: " + generationRequest.toString());
+        return HttpResponse.noContent();
     }
 }

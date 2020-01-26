@@ -1,12 +1,10 @@
 package com.github.joostvdg.cmg.analytics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-@RegisterForReflection
 public class GenerationRequest {
 
     private String requestId;
@@ -100,7 +98,11 @@ public class GenerationRequest {
     }
 
     @JsonCreator
-    public static GenerationRequest createGenerationRequest(String requestId, long generationCount, long duration, List<String> parameters, String mapType, String gameType, LocalDateTime timestamp, String host, String userAgent) {
+    public static GenerationRequest createGenerationRequest(
+            String requestId,
+            long generationCount,
+            long duration,
+            List<String> parameters, String mapType, String gameType, LocalDateTime timestamp, String host, String userAgent) {
         Builder builder = new Builder();
         builder.requestId = requestId;
         builder.generationCount = generationCount;

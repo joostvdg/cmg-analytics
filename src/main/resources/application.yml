@@ -1,0 +1,20 @@
+---
+micronaut:
+  application:
+    name: cmg-analytics-micronaut
+
+
+jooq:
+  datasources:
+    default:
+      sql-dialect: 'POSTGRES'
+      url: "jdbc:postgresql://localhost:8432/cmg"
+      username: "admin"
+      password: "admin"
+
+datasources:
+  default:
+    url: "jdbc:postgresql://localhost:8432/cmg"
+    username: "admin"
+    password: "admin"
+    driver-class-name: "org.postgresql.Driver"
