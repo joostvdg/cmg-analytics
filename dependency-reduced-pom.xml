@@ -114,6 +114,9 @@
           <url>${db.url}</url>
           <user>${db.user}</user>
           <password>${db.password}</password>
+          <locations>
+            <location>filesystem:src/main/resources/databasemigrations</location>
+          </locations>
         </configuration>
       </plugin>
       <plugin>
@@ -283,11 +286,9 @@
   <properties>
     <exec.mainClass>com.github.joostvdg.cmg.Application</exec.mainClass>
     <db.password>admin</db.password>
-    <quarkus.platform.version>1.1.1.Final</quarkus.platform.version>
     <maven.compiler.source>11</maven.compiler.source>
-    <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <postgres.driver.version>9.2-1002.jdbc4</postgres.driver.version>
     <micronaut.version>1.2.10</micronaut.version>
     <db.user>admin</db.user>
@@ -296,9 +297,8 @@
     <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.parameters>true</maven.compiler.parameters>
-    <quarkus-plugin.version>1.1.1.Final</quarkus-plugin.version>
-    <db.url>jdbc:postgresql://localhost:8432/cmg</db.url>
-    <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+    <db.name>cmg</db.name>
+    <db.url>jdbc:postgresql://localhost:5432/cmg</db.url>
   </properties>
 </project>
 

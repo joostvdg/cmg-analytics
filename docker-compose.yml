@@ -12,9 +12,3 @@ services:
       POSTGRES_USER: admin
     ports:
       - 8432:5432
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8082:8080

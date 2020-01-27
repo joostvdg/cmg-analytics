@@ -8,7 +8,8 @@
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <db.password>admin</db.password>
-    <db.url>jdbc:postgresql://localhost:8432/cmg</db.url>
+    <db.url>jdbc:postgresql://localhost:5432/cmg</db.url>
+    <db.name>cmg</db.name>
     <db.user>admin</db.user>
     <flyway.schemas>public</flyway.schemas>
     <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -17,12 +18,7 @@
     <postgres.driver.version>9.2-1002.jdbc4</postgres.driver.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-plugin.version>1.1.1.Final</quarkus-plugin.version>
-    <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>1.1.1.Final</quarkus.platform.version>
     <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
-
     <micronaut.version>1.2.10</micronaut.version>
     <exec.mainClass>com.github.joostvdg.cmg.Application</exec.mainClass>
   </properties>
@@ -45,8 +41,10 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <dependencies>
 
+    <!-- SENTRY -->
     <dependency>
       <groupId>io.sentry</groupId>
       <artifactId>sentry</artifactId>
@@ -59,11 +57,7 @@
       </exclusions>
     </dependency>
 
-    <dependency>
-      <groupId>org.jooq</groupId>
-      <artifactId>jooq</artifactId>
-      <version>3.12.3</version>
-    </dependency>
+    <!-- MICRONAUT -->
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-client</artifactId>
@@ -94,15 +88,14 @@
       <artifactId>micronaut-jooq</artifactId>
       <scope>compile</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>io.micronaut.configuration</groupId>-->
-<!--      <artifactId>micronaut-flyway</artifactId>-->
-<!--      <scope>compile</scope>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-server-netty</artifactId>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-management</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.annotation</groupId>
@@ -117,10 +110,12 @@
     </dependency>
 
 
+    <!-- DATA -->
+    <!-- Without the JDBC Driver and the Spring dependencies, Micronaut doesn't create the JOOQ Context-->
     <dependency>
-      <groupId>io.micronaut.data</groupId>
-      <artifactId>micronaut-data-jdbc</artifactId>
-      <version>1.0.0.RC1</version>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>3.12.3</version>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
@@ -128,39 +123,34 @@
       <version>42.2.9</version>
     </dependency>
     <dependency>
+      <groupId>io.micronaut.data</groupId>
+      <artifactId>micronaut-data-jdbc</artifactId>
+      <version>1.0.0.RC1</version>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut.configuration</groupId>
       <artifactId>micronaut-jdbc-hikari</artifactId>
       <scope>runtime</scope>
     </dependency>
-
-
-
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-spring</artifactId>
     </dependency>
-
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <scope>runtime</scope>
     </dependency>
 
-
-
-
+    <!-- LOGGING -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.2.3</version>
       <scope>runtime</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>com.h2database</groupId>-->
-<!--      <artifactId>h2</artifactId>-->
-<!--      <scope>runtime</scope>-->
-<!--    </dependency>-->
+
+    <!-- TEST -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -176,8 +166,8 @@
       <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -206,6 +196,9 @@
           <url>${db.url}</url>
           <user>${db.user}</user>
           <password>${db.password}</password>
+          <locations>
+            <location>filesystem:src/main/resources/databasemigrations</location>
+          </locations>
         </configuration>
       </plugin>
       <plugin>
@@ -300,9 +293,6 @@
             <argument>-noverify</argument>
             <argument>-XX:TieredStopAtLevel=1</argument>
             <argument>-Dcom.sun.management.jmxremote</argument>
-
-
-
             <argument>${exec.mainClass}</argument>
           </arguments>
         </configuration>

@@ -1,13 +1,23 @@
 # syntax=docker/dockerfile:experimental
 #######################################
-FROM adoptopenjdk:11.0.5_10-jre-openj9-0.17.0
+## Stage 1 : build with maven builder image with native capabilities
+FROM maven:3.6-jdk-11-openj9 AS build
+WORKDIR /usr/src/app
+COPY pom.xml /usr/src/app
+RUN --mount=type=cache,target=~/.m2/repository mvn dependency:go-offline
+COPY src /usr/src/app/src
+RUN --mount=type=cache,target=~/.m2/repository mvn -f /usr/src/app/pom.xml clean package -e --show-version
+RUN ls -lath /usr/src/app/
+#######################################
+## Stage 2 : create the docker final image
+FROM adoptopenjdk/openjdk11-openj9:jdk-11.0.1.13-alpine-slim
 # This is a fake SENTRY DSN, replace ENV with actual Value
 ENV SENTRY_DSN=https://public:private@host:port/1
 ENV PORT=8080
 ENV JDBC_DATABASE_URL="jdbc:postgresql://localhost:5432"
 ENV JDBC_DATABASE_USERNAME="docker"
 ENV JDBC_DATABASE_PASSWORD="docker"
-COPY target/cmg-analytics-*.jar ./app.jar
+COPY --from=build /usr/src/app/target/*.jar ./app.jar
 ### Have to use ENTRYPOINT exec to avoid issues with parameter interpolation and avoid an entrypoint.sh script
 # see: https://joostvdg.github.io/blogs/docker-graceful-shutdown/
 #ENTRYPOINT

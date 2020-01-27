@@ -2,7 +2,9 @@
 micronaut:
   application:
     name: cmg-analytics-micronaut
-
+  server:
+    host: localhost
+    port: 8081
 
 jooq:
   datasources:
@@ -18,3 +20,16 @@ datasources:
     username: "admin"
     password: "admin"
     driver-class-name: "org.postgresql.Driver"
+
+flyway:
+  datasources:
+    default:
+      locations: filesystem:src/main/resources/databasemigrations
+
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
+    details-visible: ANONYMOUS
+    jdbc:
+      enabled: true
