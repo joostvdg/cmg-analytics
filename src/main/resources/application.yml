@@ -16,6 +16,9 @@ jooq:
 
 datasources:
   default:
+    pooled: true
+    jmxExport: true
+    dbCreate: none
     url: "jdbc:postgresql://localhost:8432/cmg"
     username: "admin"
     password: "admin"
@@ -24,12 +27,15 @@ datasources:
 flyway:
   datasources:
     default:
-      locations: filesystem:src/main/resources/databasemigrations
+      locations: classpath:databasemigrations
 
 endpoints:
   health:
     enabled: true
     sensitive: false
     details-visible: ANONYMOUS
+    flyway:
+      enabled: true
+      sensitive: false
     jdbc:
       enabled: true

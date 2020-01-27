@@ -98,6 +98,10 @@
       <artifactId>micronaut-management</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.micronaut.configuration</groupId>
+      <artifactId>micronaut-flyway</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
       <scope>compile</scope>
