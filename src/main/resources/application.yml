@@ -1,0 +1,41 @@
+---
+micronaut:
+  application:
+    name: cmg-analytics-micronaut
+  server:
+    host: localhost
+    port: 8081
+
+jooq:
+  datasources:
+    default:
+      sql-dialect: 'POSTGRES'
+      url: "jdbc:postgresql://localhost:8432/cmg"
+      username: "admin"
+      password: "admin"
+
+datasources:
+  default:
+    pooled: true
+    jmxExport: true
+    dbCreate: none
+    url: "jdbc:postgresql://localhost:8432/cmg"
+    username: "admin"
+    password: "admin"
+    driver-class-name: "org.postgresql.Driver"
+
+flyway:
+  datasources:
+    default:
+      locations: classpath:databasemigrations
+
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
+    details-visible: ANONYMOUS
+    flyway:
+      enabled: true
+      sensitive: false
+    jdbc:
+      enabled: true
