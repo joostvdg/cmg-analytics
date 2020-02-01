@@ -21,6 +21,10 @@
     <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
     <micronaut.version>1.2.10</micronaut.version>
     <exec.mainClass>com.github.joostvdg.cmg.Application</exec.mainClass>
+    <sonar.projectKey>joostvdg_cmg-analytics</sonar.projectKey>
+    <sonar.organization>joostvdg</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.login>REPLACE_ME</sonar.login>
   </properties>
 
   <repositories>
@@ -145,6 +149,9 @@
       <artifactId>spring-jdbc</artifactId>
       <scope>runtime</scope>
     </dependency>
+
+    <!-- SONAR -->
+
 
     <!-- LOGGING -->
     <dependency>
