@@ -53,13 +53,13 @@
       <groupId>io.sentry</groupId>
       <artifactId>sentry</artifactId>
       <version>1.7.27</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
+    <dependency>
+      <groupId>io.sentry</groupId>
+      <artifactId>sentry-logback</artifactId>
+      <version>1.7.27</version>
+    </dependency>
+
 
     <!-- MICRONAUT -->
     <dependency>
