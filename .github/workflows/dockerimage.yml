@@ -15,12 +15,25 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Start Test Database
       run: docker-compose up -d
     - name: Maven Build
       run: ./mvn-command.sh verify
     - name: Docker Build
       run: docker image build -t cmg-analytics:latest .
+    - id: getfilename
+      run: echo "::set-output name=file::$(ls target/cmg-analytics-*.jar)"
+    - name: Upload Runner Jar
+      uses: actions/upload-artifact@v1
+      with:
+        name: runnerjar
+        path: ${{ steps.getfilename.outputs.file }}
       
   deploy:
     needs: build
@@ -30,7 +43,12 @@ jobs:
     - name: Login to Heroku Container registry
       env: 
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      run: heroku container:login 
+      run: heroku container:login
+    - name: Retrieve Runner Jar
+      uses: actions/download-artifact@v1
+      with:
+        name: runnerjar
+        path: target/cmg-analytics-runner.jar
     - name: Build and push
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
