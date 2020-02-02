@@ -4,10 +4,9 @@ on:
   push:
     branches:
     - master
-    - release/*
 
 jobs:
-  build:
+  build_and_deply:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -30,19 +29,6 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     - name: Docker Build
       run: docker image build -t cmg-analytics:latest .
-    - id: getfilename
-      run: echo "::set-output name=file::$(ls target/cmg-analytics-*.jar)"
-    - name: Upload Runner Jar
-      uses: actions/upload-artifact@v1
-      with:
-        name: runnerjar
-        path: ${{ steps.getfilename.outputs.file }}
-      
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
     - name: Login to Heroku Container registry
       env: 
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
