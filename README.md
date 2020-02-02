@@ -44,3 +44,8 @@ If you want to learn more about building native executables, please consult http
 ```json
 {"time":"2020-01-02T16:29:55.146683937Z","id":"33789a6e-83c4-4968-99cf-7d03164c5701","remote_ip":"80.127.235.6","host":"catan-map-generator.herokuapp.com","method":"GET","uri":"/api/map/code","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:71.0) Gecko/20100101 Firefox/71.0","status":200,"error":"","latency":227652659,"latency_human":"227.652659ms","bytes_in":0,"bytes_out":73}
 ```
+
+## Build With GitHub Actions
+
+* [GitHub Actions](https://github.com/features/actions)
+* [GitHub Actions Awesome List](https://github.com/sdras/awesome-actions)
