@@ -29,20 +29,15 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     - name: Docker Build
       run: docker image build -t cmg-analytics:latest .
-    - name: Login to Heroku Container registry
+    - name: Heroku Login
       env: 
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: heroku container:login
-    - name: Retrieve Runner Jar
-      uses: actions/download-artifact@v1
-      with:
-        name: runnerjar
-        path: target/cmg-analytics-runner.jar
-    - name: Build and push
+    - name: Heroku Push
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web 
-    - name: Release
+    - name: Heroku Release
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web 
