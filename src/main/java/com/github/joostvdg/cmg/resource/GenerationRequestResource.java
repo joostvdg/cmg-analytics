@@ -1,19 +1,12 @@
 package com.github.joostvdg.cmg.resource;
 
 import com.github.joostvdg.cmg.analytics.GenerationRequest;
-import com.github.joostvdg.cmg.analytics.Tables;
+import com.github.joostvdg.cmg.service.GenerationRequestService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.UUID;
-
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,36 +15,18 @@ public class GenerationRequestResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenerationRequestResource.class);
 
-    protected final DSLContext dslContext;
 
-    public GenerationRequestResource(DSLContext dslContext) {
-        this.dslContext = dslContext;
+    private GenerationRequestService generationRequestService;
+
+    public GenerationRequestResource(GenerationRequestService generationRequestService) {
+        this.generationRequestService = generationRequestService;
     }
 
     @Get
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse generationRequestDemo() {
-
-        int count = dslContext
-            .selectCount()
-            .from(Tables.GENERATIONREQUESTS)
-            .fetchOne(0, int.class);
-        LOG.info("Found " + count + " records");
-
-
-        var generationRequest = new GenerationRequest.Builder()
-            .generationCount(100)
-            .duration(100)
-            .gameType("Normal")
-            .mapType("Standard")
-            .requestId(UUID.randomUUID().toString())
-            .timestamp(LocalDateTime.now())
-            .host("Localhost")
-            .userAgent("MeMyselfAndI")
-            .parameters(Collections.emptyList())
-            .build();
-
-        return HttpResponse.ok().contentType(MediaType.APPLICATION_JSON_TYPE).body(generationRequest);
+        var generationRequests = generationRequestService.findAll();
+        return HttpResponse.ok().contentType(MediaType.APPLICATION_JSON_TYPE).body(generationRequests);
     }
 
     @Post
@@ -62,6 +37,11 @@ public class GenerationRequestResource {
             return HttpResponse.status(HttpStatus.BAD_REQUEST, "No valid object");
         }
         LOG.info("Request received: " + generationRequest.toString());
+        var databaseResponse = generationRequestService.create(generationRequest);
+
+        if(databaseResponse != null) {
+            return HttpResponse.created(generationRequest);
+        }
         return HttpResponse.noContent();
     }
 }

@@ -7,6 +7,7 @@ import java.util.*;
 
 public class GenerationRequest {
 
+    private int id; // For JOOQ CRUD actions
     private String requestId;
     private long generationCount;
     private long duration;
@@ -18,6 +19,7 @@ public class GenerationRequest {
     private String userAgent;
 
     private GenerationRequest(Builder builder) {
+        this.id = builder.id;
         this.requestId = builder.requestId;
         this.generationCount = builder.generationCount;
         this.duration = builder.duration;
@@ -27,6 +29,10 @@ public class GenerationRequest {
         this.timestamp = builder.timestamp;
         this.host = builder.host;
         this.userAgent = builder.userAgent;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getRequestId() {
@@ -99,11 +105,13 @@ public class GenerationRequest {
 
     @JsonCreator
     public static GenerationRequest createGenerationRequest(
+            int id,
             String requestId,
             long generationCount,
             long duration,
             List<String> parameters, String mapType, String gameType, LocalDateTime timestamp, String host, String userAgent) {
         Builder builder = new Builder();
+        builder.id = id;
         builder.requestId = requestId;
         builder.generationCount = generationCount;
         builder.duration = duration;
@@ -116,7 +124,14 @@ public class GenerationRequest {
         return new GenerationRequest(builder);
     }
 
+    public void updateId(int id) {
+        if (this.id < 1 && id > 0) {
+            this.id = id;
+        }
+    }
+
     public static class Builder {
+        private int id;
         private String requestId;
         private long generationCount;
         private long duration;
@@ -126,6 +141,11 @@ public class GenerationRequest {
         private LocalDateTime timestamp;
         private String host;
         private String userAgent;
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder requestId(String requestId) {
             this.requestId = requestId;

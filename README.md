@@ -49,3 +49,31 @@ If you want to learn more about building native executables, please consult http
 
 * [GitHub Actions](https://github.com/features/actions)
 * [GitHub Actions Awesome List](https://github.com/sdras/awesome-actions)
+
+## Slow Test On MacOS
+
+At some point in time, my test runs were taking minutes (over 5 minutes in some cases).
+
+Turns out, it was a [MacOS problem](https://docs.micronaut.io/latest/guide/index.html#_it_is_taking_much_longer_to_start_my_application_than_it_should_macos) related Hostname.
+
+I made two changes, one, in the `/etc/hosts` I've added my *hostname* to the mapping:
+
+```bash
+127.0.0.1       localhost <hostname>
+::1             localhost <hostname>
+```
+
+Replacing `<hostname>` with the response of the this command:
+
+```bash
+hostname
+```
+
+Second thing, was to set the *hostname* and *port* of my tests by adding these properties to the maven build.
+
+```bash
+-Dmicronaut.server.port=-1 -Dmicronaut.server.host=localhost
+```
+
+Setting the server port to `-1` means that Micronaut will pick a random port.
+Very useful when running `@Micronaut` tests.
