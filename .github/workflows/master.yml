@@ -23,7 +23,7 @@ jobs:
     - name: Start Test Database
       run: docker-compose up -d
     - name: Maven Build
-      run: ./mvn-command.sh "verify sonar:sonar -Dsonar.login=${{ secrets.SONAR_LOGIN }}"
+      run: ./mvn-command.sh "verify sonar:sonar -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dmicronaut.server.port=-1 -Dmicronaut.server.host=localhost"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
