@@ -110,13 +110,13 @@ public class GenerationRequestServiceImpl implements GenerationRequestService {
 
     @Override
     public boolean update(GenerationRequest generationRequest) {
+        if (generationRequest == null || generationRequest.getId() < 1) { // database Ids start at 1
+            throw new IllegalArgumentException("No valid generationRequest provided");
+        }
+
         var record = dslContext.fetchOne(GENERATIONREQUESTS, GENERATIONREQUESTS.ID.eq(generationRequest.getId()));
         if (record == null) {
             return false;
-        }
-
-        if (generationRequest == null) {
-            throw new IllegalArgumentException("No valid generationRequest provided");
         }
 
         String[] parameters = new String[0];
