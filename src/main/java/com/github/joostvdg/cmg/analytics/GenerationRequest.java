@@ -33,6 +33,10 @@ public class GenerationRequest {
         if (this.parameters == null) {
             this.parameters = new ArrayList<>();
         }
+
+        if (this.timestamp == null) {
+            this.timestamp = LocalDateTime.now();
+        }
     }
 
     public int getId() {
