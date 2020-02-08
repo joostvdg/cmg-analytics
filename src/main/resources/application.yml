@@ -5,6 +5,26 @@ micronaut:
   server:
     host: localhost
     port: 8081
+  security:
+    enabled: true
+    endpoints:
+      login:
+        enabled: true
+      oauth:
+        enabled: true
+    token:
+      jwt:
+        enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: pleaseChangeThisSecretForANewOne
+
+
+cmg:
+  analytics:
+    user: test
+    password: test
 
 jooq:
   datasources:

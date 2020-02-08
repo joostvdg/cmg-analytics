@@ -106,6 +106,10 @@
       <artifactId>micronaut-flyway</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-security-jwt</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
       <scope>compile</scope>
@@ -303,6 +307,8 @@
             <classpath/>
             <argument>-noverify</argument>
             <argument>-XX:TieredStopAtLevel=1</argument>
+            <argument>-Dcmg.analytics.user=admin</argument>
+            <argument>-Dcmg.analytics.password=admin</argument>
             <argument>-Dcom.sun.management.jmxremote</argument>
             <argument>${exec.mainClass}</argument>
           </arguments>

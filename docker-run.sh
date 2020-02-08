@@ -29,6 +29,8 @@ java -Xms256M -Xmx480M -Djava.security.egd=file:/dev/./urandom \
   -Ddatasources.default.url=${JDBC_DATABASE_URL} \
   -Ddatasources.default.username=${JDBC_DATABASE_USERNAME} \
   -Ddatasources.default.password=${JDBC_DATABASE_PASSWORD} \
+  -Dcmg.analytics.user=${CMG_USER} \
+  -Dcmg.analytics.password=${CMG_PASSWORD} \
   -XX:+UnlockExperimentalVMOptions \
   -XX:+UseCGroupMemoryLimitForHeap \
   -Dcom.sun.management.jmxremote \
