@@ -7,9 +7,11 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 
+import io.micronaut.security.annotation.Secured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Secured("isAuthenticated()")
 @Controller("/generationRequest")
 public class GenerationRequestResource {
 
