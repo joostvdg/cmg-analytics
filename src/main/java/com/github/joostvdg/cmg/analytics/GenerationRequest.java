@@ -29,6 +29,10 @@ public class GenerationRequest {
         this.timestamp = builder.timestamp;
         this.host = builder.host;
         this.userAgent = builder.userAgent;
+
+        if (this.parameters == null) {
+            this.parameters = new ArrayList<>();
+        }
     }
 
     public int getId() {
