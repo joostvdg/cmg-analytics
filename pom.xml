@@ -57,7 +57,7 @@
     <dependency>
       <groupId>io.sentry</groupId>
       <artifactId>sentry-logback</artifactId>
-      <version>1.7.27</version>
+      <version>5.5.2</version>
     </dependency>
 
 
@@ -248,7 +248,7 @@
             <database>
               <name>org.jooq.meta.postgres.PostgresDatabase</name>
               <includes>.*</includes>
-              <excludes></excludes>
+              <excludes/>
               <inputSchema>public</inputSchema>
             </database>
             <target>
