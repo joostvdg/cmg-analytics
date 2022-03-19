@@ -11,7 +11,7 @@ You can run your application in dev mode that enables live coding using:
 ./mvnw quarkus:dev
 ```
 
-## Packaging and running the application
+## Package and running the application
 
 The application is packageable using `./mvnw package`.
 It produces the executable `cmg-analytics-1.0.0-SNAPSHOT-runner.jar` file in `/target` directory.
@@ -77,3 +77,90 @@ Second thing, was to set the *hostname* and *port* of my tests by adding these p
 
 Setting the server port to `-1` means that Micronaut will pick a random port.
 Very useful when running `@Micronaut` tests.
+
+## Test Containers
+
+
+* https://www.baeldung.com/docker-test-containers
+* https://www.tabnine.com/code/java/packages/org.testcontainers.jdbc
+
+### JOOQ Generation
+
+* https://tutorials.blog.crabberspost.com/2022/03/11/the-usage-of-testcontainers-to-generate-jooq-code-java-sql-and-jooq/
+* https://blog.jooq.org/using-testcontainers-to-generate-jooq-code/
+* https://github.com/jOOQ/jOOQ/tree/main/jOOQ-examples/jOOQ-testcontainers-flyway-example
+
+## Authentication
+
+For more info on how to do this with `httpie` and `curl`, [see this blog post](https://www.ctl.io/developers/blog/post/curl-vs-httpie-http-apis).
+
+Retrieve the bearer token (using default config):
+
+```shell
+http POST :8081/login 'username=test' 'password=test'
+```
+
+```shell
+HTTP/1.1 200 OK
+Content-Type: application/json
+connection: keep-alive
+content-length: 274
+date: Thu, 17 Mar 2022 20:55:33 GMT
+
+{
+    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwibmJmIjoxNjQ3NTUwNTMzLCJyb2xlcyI6W10sImlzcyI6ImNtZy1hbmFseXRpY3MyIiwiZXhwIjoxNjQ3NTU0MTMzLCJpYXQiOjE2NDc1NTA1MzN9.lSCepcfNEPgGUPvJp2gd5kozTaZo3g0bInJNUBDeOZg",
+    "expires_in": 3600,
+    "token_type": "Bearer",
+    "username": "test"
+}
+```
+
+Then use that bearer token, to access the other resources:
+
+```shell
+http :8081/hello 'Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwibmJmIjoxNjQ3NTUwNTMzLCJyb2xlcyI6W10sImlzcyI6ImNtZy1hbmFseX
+RpY3MyIiwiZXhwIjoxNjQ3NTU0MTMzLCJpYXQiOjE2NDc1NTA1MzN9.lSCepcfNEPgGUPvJp2gd5kozTaZo3g0bInJNUBDeOZg'
+```
+
+```shell
+HTTP/1.1 200 OK
+Content-Type: text/plain
+connection: keep-alive
+content-length: 10
+date: Thu, 17 Mar 2022 20:56:45 GMT
+
+Hello test
+```
+
+### Using a Session
+
+```shell
+http POST :8082/login 'username=test' 'password=test' | jq .access_token
+```
+
+```shell
+http --session=s1 :8082/hello 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwibmJmIjoxNjQ3NjkwODgwLCJyb2xlcyI6W10sImlzcyI6ImNtZy1hbmFseXRpY3MyIiwiZXhwIjoxNjQ3Njk0NDgwLCJpYXQiOjE2NDc2OTA4ODB9.9sVBnkA7TZpbjxs4sIHw8uYd5I64PkmCNBr12zTG0J8'
+```
+
+```shell
+http --session=s1 :8082/hello
+```
+
+### Create New Entry
+
+```shell
+http --session=s1 GET :8082/generationRequest
+```
+
+```shell
+http --session=s1 POST :8082/generationRequest \
+    requestId="ABCDEFG12345" \
+    generationCount:=200 \
+    duration:=20 \
+    parameters:='["max300=20"]' \
+    mapType="Large" \
+    gameType="Normal" \
+    host="localhost" \
+    userAgent="httpie" \
+    timestamp="2020-01-02T16:29:55.146683937Z"
+```
