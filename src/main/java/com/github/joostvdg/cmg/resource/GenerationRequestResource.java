@@ -8,10 +8,14 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Secured("isAuthenticated()")
+import java.security.Principal;
+import java.util.List;
+
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/generationRequest")
 public class GenerationRequestResource {
 
@@ -26,14 +30,14 @@ public class GenerationRequestResource {
 
     @Get
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse generationRequestDemo() {
+    public HttpResponse<List<GenerationRequest>> generationRequestDemo(Principal principal) {
         var generationRequests = generationRequestService.findAll();
         return HttpResponse.ok().contentType(MediaType.APPLICATION_JSON_TYPE).body(generationRequests);
     }
 
     @Post
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse receiveGenerationRequest(@Body GenerationRequest generationRequest) {
+    public HttpResponse<GenerationRequest> receiveGenerationRequest(@Body GenerationRequest generationRequest, Principal principal) {
         if (generationRequest == null ) {
             LOG.info("Request failed, no content");
             return HttpResponse.status(HttpStatus.BAD_REQUEST, "No valid object");

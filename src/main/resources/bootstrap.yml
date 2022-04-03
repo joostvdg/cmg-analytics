@@ -1,0 +1,5 @@
+micronaut:
+  application:
+    name: cmgAnalytics2
+  config-client:
+    enabled: true

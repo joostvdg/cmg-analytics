@@ -1,15 +1,16 @@
 package com.github.joostvdg.cmg.service.impl;
+
 import io.micronaut.context.annotation.Property;
-import io.micronaut.security.authentication.AuthenticationFailed;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import io.micronaut.security.authentication.UserDetails;
-import io.reactivex.Flowable;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
-import javax.inject.Singleton;
-import java.util.ArrayList;
 
 @Singleton
 public class AuthenticationProviderUserPassword implements AuthenticationProvider {
@@ -21,11 +22,16 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     protected String password;
 
     @Override
-    public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
-        if (authenticationRequest.getIdentity().equals(user) &&
-                authenticationRequest.getSecret().equals(password)) {
-            return Flowable.just(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList<>()));
-        }
-        return Flowable.just(new AuthenticationFailed());
+    public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest,
+                                                          AuthenticationRequest<?, ?> authenticationRequest) {
+        return Flux.create(emitter -> {
+            if (authenticationRequest.getIdentity().equals(user) &&
+                    authenticationRequest.getSecret().equals(password)) {
+                emitter.next(AuthenticationResponse.success((String) authenticationRequest.getIdentity()));
+                emitter.complete();
+            } else {
+                emitter.error(AuthenticationResponse.exception());
+            }
+        }, FluxSink.OverflowStrategy.ERROR);
     }
 }

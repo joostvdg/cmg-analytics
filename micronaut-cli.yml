@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.github.joostvdg.cmg
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [annotation-api, app-name, config-kubernetes, data, data-jdbc, flyway, github-workflow-graal-docker-registry, graalvm, h2, http-client, jackson-databind, java, java-application, jdbc-hikari, jib, jooq, junit, kubernetes, log4j2, management, maven, micrometer, micrometer-prometheus, netty-server, openapi, readme, security-annotations, security-jwt, shade, tracing-zipkin, yaml]

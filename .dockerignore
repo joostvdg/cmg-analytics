@@ -1,0 +1,8 @@
+Dockerfile.multi-stage
+Dockerfile
+.github
+.idea
+k8s.yaml
+micronaut-cli.yaml
+README.md
+.gitignore

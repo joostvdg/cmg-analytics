@@ -2,13 +2,13 @@ package com.github.joostvdg.cmg.service.impl;
 
 import com.github.joostvdg.cmg.analytics.GenerationRequest;
 import com.github.joostvdg.cmg.service.GenerationRequestService;
+import jakarta.inject.Singleton;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
-import java.sql.Timestamp;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +40,7 @@ public class GenerationRequestServiceImpl implements GenerationRequestService {
     }
 
     @Override
+    @Transactional
     public List<GenerationRequest> findAll() {
         List<GenerationRequest> generationRequests = new ArrayList<>();
         var records = dslContext.select().from(GENERATIONREQUESTS).fetch();
@@ -53,6 +54,7 @@ public class GenerationRequestServiceImpl implements GenerationRequestService {
     }
 
     @Override
+    @Transactional
     public GenerationRequest create(GenerationRequest generationRequest) {
         if (generationRequest == null) {
             throw new IllegalArgumentException("No valid generationRequest provided");
@@ -64,17 +66,17 @@ public class GenerationRequestServiceImpl implements GenerationRequestService {
         }
 
         Record record = dslContext.insertInto(GENERATIONREQUESTS)
-            .set(GENERATIONREQUESTS.REQUEST_ID, generationRequest.getRequestId())
-            .set(GENERATIONREQUESTS.GENERATION_COUNT, generationRequest.getGenerationCount())
-            .set(GENERATIONREQUESTS.DURATION, generationRequest.getDuration())
-            .set(GENERATIONREQUESTS.MAP_TYPE, generationRequest.getMapType())
-            .set(GENERATIONREQUESTS.GAME_TYPE, generationRequest.getGameType())
-            .set(GENERATIONREQUESTS.HOST, generationRequest.getHost())
-            .set(GENERATIONREQUESTS.USER_AGENT, generationRequest.getUserAgent())
-            .set(GENERATIONREQUESTS.PARAMETERS, parameters)
-            .set(GENERATIONREQUESTS.TIMESTAMP_REQUEST, Timestamp.valueOf(generationRequest.getTimestamp()))
-            .returning(GENERATIONREQUESTS.ID)
-            .fetchOne();
+                .set(GENERATIONREQUESTS.REQUEST_ID, generationRequest.getRequestId())
+                .set(GENERATIONREQUESTS.GENERATION_COUNT, generationRequest.getGenerationCount())
+                .set(GENERATIONREQUESTS.DURATION, generationRequest.getDuration())
+                .set(GENERATIONREQUESTS.MAP_TYPE, generationRequest.getMapType())
+                .set(GENERATIONREQUESTS.GAME_TYPE, generationRequest.getGameType())
+                .set(GENERATIONREQUESTS.HOST, generationRequest.getHost())
+                .set(GENERATIONREQUESTS.USER_AGENT, generationRequest.getUserAgent())
+                .set(GENERATIONREQUESTS.PARAMETERS, parameters)
+                .set(GENERATIONREQUESTS.TIMESTAMP_REQUEST, generationRequest.getTimestamp())
+                .returning(GENERATIONREQUESTS.ID)
+                .fetchOne();
 
         if (record == null ) {
             LOG.warn("Insert did not return a valid result");
@@ -132,7 +134,7 @@ public class GenerationRequestServiceImpl implements GenerationRequestService {
         record.set(GENERATIONREQUESTS.HOST, generationRequest.getHost());
         record.set(GENERATIONREQUESTS.USER_AGENT, generationRequest.getUserAgent());
         record.set(GENERATIONREQUESTS.PARAMETERS, parameters);
-        record.set(GENERATIONREQUESTS.TIMESTAMP_REQUEST, Timestamp.valueOf(generationRequest.getTimestamp()));
+        record.set(GENERATIONREQUESTS.TIMESTAMP_REQUEST, generationRequest.getTimestamp());
         record.store();
 
         return true;
@@ -153,19 +155,19 @@ public class GenerationRequestServiceImpl implements GenerationRequestService {
         String host = record.get(GENERATIONREQUESTS.HOST);
         String userAgent = record.get(GENERATIONREQUESTS.USER_AGENT);
         List<String> parameters = Arrays.asList(record.get(GENERATIONREQUESTS.PARAMETERS));
-        LocalDateTime timestamp = record.get(GENERATIONREQUESTS.TIMESTAMP_REQUEST).toLocalDateTime();
+        LocalDateTime timestamp = record.get(GENERATIONREQUESTS.TIMESTAMP_REQUEST);
 
         return new GenerationRequest.Builder()
-            .id(id)
-            .requestId(requestId)
-            .generationCount(generationCount)
-            .duration(duration)
-            .mapType(mapType)
-            .gameType(gameType)
-            .host(host)
-            .userAgent(userAgent)
-            .parameters(parameters)
-            .timestamp(timestamp)
-            .build();
+                .id(id)
+                .requestId(requestId)
+                .generationCount(generationCount)
+                .duration(duration)
+                .mapType(mapType)
+                .gameType(gameType)
+                .host(host)
+                .userAgent(userAgent)
+                .parameters(parameters)
+                .timestamp(timestamp)
+                .build();
     }
 }

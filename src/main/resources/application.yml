@@ -1,10 +1,21 @@
----
+tracing:
+  zipkin:
+    enabled: true
+    http:
+      url: http://${ZIPKIN_SERVER:localhost}:9411
+    sampler:
+      probability: 0.1
+netty:
+  default:
+    allocator:
+      max-order: 3
+
 micronaut:
   application:
     name: cmg-analytics-micronaut
   server:
     host: localhost
-    port: 8081
+    port: 8082
   security:
     enabled: true
     endpoints:
@@ -12,42 +23,21 @@ micronaut:
         enabled: true
       oauth:
         enabled: true
+    authentication: bearer
     token:
       jwt:
         enabled: true
         signatures:
           secret:
             generator:
-              secret: pleaseChangeThisSecretForANewOne
-
-
-cmg:
-  analytics:
-    user: test
-    password: test
-
-jooq:
-  datasources:
-    default:
-      sql-dialect: 'POSTGRES'
-      url: "jdbc:postgresql://localhost:8432/cmg"
-      username: "admin"
-      password: "admin"
-
-datasources:
-  default:
-    pooled: true
-    jmxExport: true
-    dbCreate: none
-    url: "jdbc:postgresql://localhost:8432/cmg"
-    username: "admin"
-    password: "admin"
-    driver-class-name: "org.postgresql.Driver"
-
-flyway:
-  datasources:
-    default:
-      locations: classpath:databasemigrations
+              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        descriptions: true
+        step: PT1M
+    enabled: true
 
 endpoints:
   health:
@@ -58,4 +48,35 @@ endpoints:
       enabled: true
       sensitive: false
     jdbc:
+      enabled: true
+
+cmg:
+  analytics:
+    user: test
+    password: test
+
+jooq:
+  datasources:
+    default:
+      sql-dialect: 'POSTGRES'
+      url: ${JDBC_DATABASE_URL:`jdbc:postgresql://localhost:8432/cmg`}
+      username: ${JDBC_DATABASE_USERNAME:admin}
+      password: ${JDBC_DATABASE_PASSWORD:admin}
+
+datasources:
+  default:
+    pooled: true
+    jmxExport: true
+    dbCreate: none
+    schema-generate: NONE
+    dialect: POSTGRES
+    url: ${JDBC_DATABASE_URL:`jdbc:postgresql://localhost:8432/cmg`}
+    username: ${JDBC_DATABASE_USERNAME:admin}
+    password: ${JDBC_DATABASE_PASSWORD:admin}
+    driver-class-name: "org.postgresql.Driver"
+    driverClassName: ${JDBC_DRIVER:org.postgresql.Driver}
+
+flyway:
+  datasources:
+    default:
       enabled: true

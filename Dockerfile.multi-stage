@@ -1,30 +1,73 @@
-# syntax=docker/dockerfile:experimental
 #######################################
 ## Stage 1 : build with maven builder image with native capabilities
-FROM maven:3.6-jdk-11-openj9 AS build
-WORKDIR /usr/src/app
-COPY pom.xml /usr/src/app
-RUN --mount=type=cache,target=~/.m2/repository mvn dependency:go-offline
-COPY src /usr/src/app/src
-RUN --mount=type=cache,target=~/.m2/repository mvn -f /usr/src/app/pom.xml clean package -e --show-version
-RUN ls -lath /usr/src/app/
+#FROM maven:3.6-jdk-11-openj9 AS build
+#WORKDIR /usr/src/app
+#COPY pom.xml /usr/src/app
+#RUN --mount=type=cache,target=~/.m2/repository mvn dependency:go-offline
+#COPY src /usr/src/app/src
+#RUN --mount=type=cache,target=~/.m2/repository mvn -f /usr/src/app/pom.xml clean package -e --show-version
+#RUN ls -lath /usr/src/app/
+
+#######################################
+## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi-quarkus-native-image:22.0-java17 AS build
+USER root
+ARG DIND_IP=dockerdind
+ENV DOCKER_HOST=tcp\://${DIND_IP}\:2375
+#ENV DOCKER_TLS_VERIFY=0
+#ENV DOCKER_CERT_PATH=""
+RUN microdnf update && microdnf install -y wget-1.19.5-10.el8.x86_64
+RUN wget https://download.docker.com/linux/static/stable/x86_64/docker-20.10.9.tgz
+RUN tar xzvf docker-20.10.9.tgz
+RUN chmod -R 0777 docker/*
+RUN cp docker/* /usr/bin/
+RUN docker version
+COPY --chown=quarkus:quarkus mvnw /code/mvnw
+COPY --chown=quarkus:quarkus .mvn /code/.mvn
+COPY --chown=quarkus:quarkus pom.xml /code/
+USER quarkus
+WORKDIR /code
+RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
+COPY src /code/src
+RUN ./mvnw package -Dpackaging=native-image
 #######################################
 ## Stage 2 : create the docker final image
-FROM adoptopenjdk/openjdk11-openj9:jdk-11.0.1.13-alpine-slim
+#FROM adoptopenjdk/openjdk11-openj9:jdk-11.0.1.13-alpine-slim
 # This is a fake SENTRY DSN, replace ENV with actual Value
-ENV SENTRY_DSN=https://public:private@host:port/1
-ENV PORT=8080
-ENV JDBC_DATABASE_URL="jdbc:postgresql://localhost:5432"
-ENV JDBC_DATABASE_USERNAME="docker"
-ENV JDBC_DATABASE_PASSWORD="docker"
-COPY --from=build /usr/src/app/target/*.jar ./app.jar
+#ENV SENTRY_DSN=https://public:private@host:port/1
+#ENV PORT=8080
+#ENV JDBC_DATABASE_URL="jdbc:postgresql://localhost:8432"
+#ENV JDBC_DATABASE_USERNAME="docker"
+#ENV JDBC_DATABASE_PASSWORD="docker"
+#COPY --from=build /usr/src/app/target/*.jar ./app.jar
 ### Have to use ENTRYPOINT exec to avoid issues with parameter interpolation and avoid an entrypoint.sh script
 # see: https://joostvdg.github.io/blogs/docker-graceful-shutdown/
 #ENTRYPOINT
 ### Heroku expect a CMD command, so we have to use it
 # https://stackoverflow.com/questions/55913408/no-command-specified-for-process-type-web-on-heroku
-EXPOSE 8080
-COPY docker-run.sh /run.sh
-RUN chmod +x /run.sh
-CMD ["/run.sh"]
+#EXPOSE 8080
+#COPY docker-run.sh /run.sh
+#RUN chmod +x /run.sh
+#CMD ["/run.sh"]
 #######################################
+
+FROM quay.io/quarkus/quarkus-micro-image:1.0
+WORKDIR /work/
+RUN mkdir work
+COPY --from=build /code/target/cmg-analytics2 /work/cmg-analytics2
+## This is a fake SENTRY DSN, replace ENV with actual Value
+ENV SENTRY_DSN=https://public:private@host:port/1
+ENV JDBC_DATABASE_URL="jdbc:postgresql://localhost:5432"
+ENV JDBC_DATABASE_USERNAME="docker"
+ENV JDBC_DATABASE_PASSWORD="docker"
+
+# set up permissions for user `1001`
+RUN chmod 775 /work /work/cmg-analytics2 \
+  && chown -R 1001 /work \
+  && chmod -R "g+rwX" /work \
+  && chown -R 1001:root /work
+
+EXPOSE 8082
+USER 1001
+
+CMD exec "./cmg-analytics2"

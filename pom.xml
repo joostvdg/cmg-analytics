@@ -1,72 +1,59 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.joostvdg.cmg</groupId>
-  <artifactId>cmg-analytics</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <artifactId>cmg-analytics2</artifactId>
+  <version>0.1</version>
+  <packaging>${packaging}</packaging>
+
+  <parent>
+    <groupId>io.micronaut</groupId>
+    <artifactId>micronaut-parent</artifactId>
+    <version>3.3.4</version>
+  </parent>
+
+  <developers>
+    <developer>
+      <name>Joost van der Griendt</name>
+      <email>joostvdg@protonmail.com</email>
+      <timezone>CET</timezone>
+      <url>http://github.com/joostvdg</url>
+    </developer>
+  </developers>
+
+
   <properties>
-    <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <db.password>admin</db.password>
-    <db.url>jdbc:postgresql://localhost:5432/cmg</db.url>
-    <db.name>cmg</db.name>
-    <db.user>admin</db.user>
-    <flyway.schemas>public</flyway.schemas>
-    <maven.compiler.parameters>true</maven.compiler.parameters>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <postgres.driver.version>9.2-1002.jdbc4</postgres.driver.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
-    <micronaut.version>1.2.10</micronaut.version>
+    <packaging>jar</packaging>
+    <jdk.version>17</jdk.version>
+    <release.version>17</release.version>
+    <micronaut.version>3.3.4</micronaut.version>
+    <jib.docker.image>${project.artifactId}</jib.docker.image>
+    <jib.docker.tag>${project.version}</jib.docker.tag>
     <exec.mainClass>com.github.joostvdg.cmg.Application</exec.mainClass>
-    <sonar.projectKey>joostvdg_cmg-analytics</sonar.projectKey>
-    <sonar.organization>joostvdg</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.login>REPLACE_ME</sonar.login>
+    <micronaut.data.version>3.2.2</micronaut.data.version>
+    <micronaut.runtime>netty</micronaut.runtime>
+    <postgres.driver.version>9.2-1002.jdbc4</postgres.driver.version>
+    <testcontainers.version>1.16.3</testcontainers.version>
+<!--    <db.url>jdbc:tc:postgresql:12:///cmg?TC_DAEMON=true</db.url>-->
+    <db.username>postgres</db.username>
+    <db.password>postgres</db.password>
+<!--    <db.url>jdbc:postgresql://localhost:8432/cmg</db.url>-->
+<!--    <db.name>cmg</db.name>-->
+<!--    <db.password>admin</db.password>-->
+<!--    <db.user>admin</db.user>-->
   </properties>
 
   <repositories>
     <repository>
-      <id>jcenter.bintray.com</id>
-      <url>https://jcenter.bintray.com</url>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
     </repository>
   </repositories>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>io.micronaut</groupId>
-        <artifactId>micronaut-bom</artifactId>
-        <version>${micronaut.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
-
-    <!-- SENTRY -->
-    <dependency>
-      <groupId>io.sentry</groupId>
-      <artifactId>sentry</artifactId>
-      <version>1.7.27</version>
-    </dependency>
-    <dependency>
-      <groupId>io.sentry</groupId>
-      <artifactId>sentry-logback</artifactId>
-      <version>1.7.27</version>
-    </dependency>
-
-
-    <!-- MICRONAUT -->
-    <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-http-client</artifactId>
-      <scope>compile</scope>
-    </dependency>
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject</artifactId>
@@ -74,98 +61,9 @@
     </dependency>
     <dependency>
       <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-inject-java</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut</groupId>
       <artifactId>micronaut-validation</artifactId>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-runtime</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut.configuration</groupId>
-      <artifactId>micronaut-jooq</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-http-server-netty</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-management</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut.configuration</groupId>
-      <artifactId>micronaut-flyway</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-security-jwt</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-parameter-names</artifactId>
-      <version>2.9.0</version>
-      <scope>compile</scope>
-    </dependency>
-
-
-    <!-- DATA -->
-    <!-- Without the JDBC Driver and the Spring dependencies, Micronaut doesn't create the JOOQ Context-->
-    <dependency>
-      <groupId>org.jooq</groupId>
-      <artifactId>jooq</artifactId>
-      <version>3.12.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.2.9</version>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut.data</groupId>
-      <artifactId>micronaut-data-jdbc</artifactId>
-      <version>1.0.0.RC1</version>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut.configuration</groupId>
-      <artifactId>micronaut-jdbc-hikari</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- SONAR -->
-
-
-    <!-- LOGGING -->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- TEST -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -181,14 +79,246 @@
       <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-http-client</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-http-server-netty</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-jackson-databind</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-parameter-names</artifactId>
+      <version>2.13.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-management</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-runtime</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.data</groupId>
+      <artifactId>micronaut-data-jdbc</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.flyway</groupId>
+      <artifactId>micronaut-flyway</artifactId>
+      <scope>compile</scope>
+    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.micronaut.kubernetes</groupId>-->
+<!--      <artifactId>micronaut-kubernetes-discovery-client</artifactId>-->
+<!--      <scope>compile</scope>-->
+<!--    </dependency>-->
+    <dependency>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-micrometer-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-micrometer-registry-prometheus</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.security</groupId>
+      <artifactId>micronaut-security-jwt</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.sql</groupId>
+      <artifactId>micronaut-jdbc-hikari</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.sql</groupId>
+      <artifactId>micronaut-jooq</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.tracing</groupId>
+      <artifactId>micronaut-tracing-zipkin</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <scope>compile</scope>
+    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.apache.logging.log4j</groupId>-->
+<!--      <artifactId>log4j-core</artifactId>-->
+<!--      <version>2.17.1</version>-->
+<!--      <scope>compile</scope>-->
+<!--    </dependency>-->
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <!-- 04 Testcontainers Start -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.3.3</version>
+    </dependency>
+    <!-- 04 Testcontainers ends-->
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+<!--    <dependency>-->
+<!--      <groupId>org.apache.logging.log4j</groupId>-->
+<!--      <artifactId>log4j-api</artifactId>-->
+<!--      <version>2.17.1</version>-->
+<!--      <scope>runtime</scope>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.apache.logging.log4j</groupId>-->
+<!--      <artifactId>log4j-slf4j-impl</artifactId>-->
+<!--      <version>2.17.1</version>-->
+<!--      <scope>runtime</scope>-->
+<!--    </dependency>-->
   </dependencies>
 
   <build>
     <plugins>
+      <!-- https://micronaut-projects.github.io/micronaut-maven-plugin/latest/examples/package.html -->
+<!--      <plugin>-->
+<!--        <groupId>org.graalvm.buildtools</groupId>-->
+<!--        <artifactId>native-maven-plugin</artifactId>-->
+<!--        <version>0.9.11</version>-->
+<!--        <configuration>-->
+<!--          <buildArgs combine.children="append">-->
+<!--            &lt;!&ndash; https://github.com/oracle/graal/issues/3526 &ndash;&gt;-->
+<!--&lt;!&ndash;            <buildArg>&#45;&#45;language:js</buildArg>&ndash;&gt;-->
+<!--&lt;!&ndash;            <buildArg> &#45;&#45;trace-class-initialization=org.apache.logging.slf4j.Log4jLogger</buildArg>&ndash;&gt;-->
+<!--            <buildArg>&#45;&#45;initialize-at-run-time=org.apache.logging.slf4j.Log4jLogger</buildArg>-->
+<!--          </buildArgs>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
+
+      <plugin>
+        <groupId>io.micronaut.build</groupId>
+        <artifactId>micronaut-maven-plugin</artifactId>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- Uncomment to enable incremental compilation -->
+          <!-- <useIncrementalCompilation>false</useIncrementalCompilation> -->
+
+          <annotationProcessorPaths combine.children="append">
+            <path>
+              <groupId>io.micronaut</groupId>
+              <artifactId>micronaut-http-validation</artifactId>
+              <version>${micronaut.version}</version>
+            </path>
+            <path>
+              <groupId>io.micronaut.data</groupId>
+              <artifactId>micronaut-data-processor</artifactId>
+              <version>${micronaut.data.version}</version>
+            </path>
+            <path>
+              <groupId>io.micronaut.openapi</groupId>
+              <artifactId>micronaut-openapi</artifactId>
+              <version>${micronaut.openapi.version}</version>
+            </path>
+            <path>
+              <groupId>io.micronaut.security</groupId>
+              <artifactId>micronaut-security-annotations</artifactId>
+              <version>${micronaut.security.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-Amicronaut.processing.group=com.github.joostvdg.cmg</arg>
+            <arg>-Amicronaut.processing.module=cmg-analytics2</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <!-- Much better if there was a testcontainers lifecycle management plugin!
+                 Upvote here if you like the idea: https://github.com/testcontainers/testcontainers-java/issues/4397 -->
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>groovy-maven-plugin</artifactId>
+        <version>2.1.1</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source>
+                db = new org.testcontainers.containers.PostgreSQLContainer("postgres:12")
+                        .withUsername("${db.username}")
+                        .withDatabaseName("cmg")
+                        .withPassword("${db.password}");
+                db.start();
+                project.properties.setProperty('db.url', db.getJdbcUrl());
+              </source>
+            </configuration>
+          </execution>
+        </executions>
+
+        <dependencies>
+          <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
-        <version>6.2.0</version>
+        <version>7.14.0</version>
         <executions>
           <execution>
             <id>integration-test-database-setup</id>
@@ -203,23 +333,28 @@
           <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.9</version>
+            <version>42.3.3</version>
+          </dependency>
+          <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
           </dependency>
         </dependencies>
         <configuration>
           <schemas>public</schemas>
           <url>${db.url}</url>
-          <user>${db.user}</user>
+          <user>${db.username}</user>
           <password>${db.password}</password>
-          <locations>
-            <location>filesystem:src/main/resources/databasemigrations</location>
-          </locations>
+<!--          <locations>-->
+<!--            <location>filesystem:src/main/resources/databasemigrations</location>-->
+<!--          </locations>-->
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.jooq</groupId>
         <artifactId>jooq-codegen-maven</artifactId>
-        <version>3.12.3</version>
+        <version>3.14.15</version>
         <executions>
           <execution>
             <id>jooq-codegen</id>
@@ -233,22 +368,24 @@
           <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.9</version>
+            <version>42.3.3</version>
+          </dependency>
+          <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
           </dependency>
         </dependencies>
         <configuration>
           <jdbc>
-            <driver>org.postgresql.Driver</driver>
+<!--            <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>-->
             <url>${db.url}</url>
-            <user>${db.user}</user>
+            <user>${db.username}</user>
             <password>${db.password}</password>
           </jdbc>
           <generator>
             <name>org.jooq.codegen.JavaGenerator</name>
             <database>
-              <name>org.jooq.meta.postgres.PostgresDatabase</name>
-              <includes>.*</includes>
-              <excludes></excludes>
               <inputSchema>public</inputSchema>
             </database>
             <target>
@@ -261,6 +398,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.3.0</version>
         <executions>
           <execution>
             <phase>process-sources</phase>
@@ -275,130 +413,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>${exec.mainClass}</mainClass>
-                </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <configuration>
-          <executable>java</executable>
-          <arguments>
-            <argument>-classpath</argument>
-            <classpath/>
-            <argument>-noverify</argument>
-            <argument>-XX:TieredStopAtLevel=1</argument>
-            <argument>-Dcmg.analytics.user=admin</argument>
-            <argument>-Dcmg.analytics.password=admin</argument>
-            <argument>-Dcom.sun.management.jmxremote</argument>
-            <argument>${exec.mainClass}</argument>
-          </arguments>
-        </configuration>
-      </plugin>
     </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin.version}</version>
-          <configuration>
-            <detail>true</detail>
-            <includes>
-              <include>%regex[.*]</include>
-            </includes>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven-failsafe-plugin.version}</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
-          <configuration>
-            <compilerArgs>
-              <arg>-parameters</arg>
-            </compilerArgs>
-            <annotationProcessorPaths>
-              <path>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-inject-java</artifactId>
-                <version>1.2.10</version>
-              </path>
-              <path>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-validation</artifactId>
-                <version>1.2.10</version>
-              </path>
-              <path>
-                <groupId>io.micronaut.data</groupId>
-                <artifactId>micronaut-data-processor</artifactId>
-                <version>1.0.0.RC1</version>
-              </path>
-            </annotationProcessorPaths>
-          </configuration>
-          <executions>
-            <execution>
-              <id>test-compile</id>
-              <goals>
-                <goal>testCompile</goal>
-              </goals>
-              <configuration>
-                <compilerArgs>
-                  <arg>-parameters</arg>
-                </compilerArgs>
-                <annotationProcessorPaths>
-                  <path>
-                    <groupId>io.micronaut</groupId>
-                    <artifactId>micronaut-inject-java</artifactId>
-                    <version>1.2.10</version>
-                  </path>
-                  <path>
-                    <groupId>io.micronaut</groupId>
-                    <artifactId>micronaut-validation</artifactId>
-                    <version>1.2.10</version>
-                  </path>
-                  <path>
-                    <groupId>io.micronaut.data</groupId>
-                    <artifactId>micronaut-data-processor</artifactId>
-                    <version>1.0.0.RC1</version>
-                  </path>
-                </annotationProcessorPaths>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
+
 </project>

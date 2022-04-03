@@ -39,7 +39,7 @@ If you want to learn more about building native executables, please consult http
 * gameType
 * timestamp
 * host
-* userAgent 
+* userAgent
 
 ```json
 {"time":"2020-01-02T16:29:55.146683937Z","id":"33789a6e-83c4-4968-99cf-7d03164c5701","remote_ip":"80.127.235.6","host":"catan-map-generator.herokuapp.com","method":"GET","uri":"/api/map/code","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:71.0) Gecko/20100101 Firefox/71.0","status":200,"error":"","latency":227652659,"latency_human":"227.652659ms","bytes_in":0,"bytes_out":73}
@@ -77,18 +77,6 @@ Second thing, was to set the *hostname* and *port* of my tests by adding these p
 
 Setting the server port to `-1` means that Micronaut will pick a random port.
 Very useful when running `@Micronaut` tests.
-
-## Test Containers
-
-
-* https://www.baeldung.com/docker-test-containers
-* https://www.tabnine.com/code/java/packages/org.testcontainers.jdbc
-
-### JOOQ Generation
-
-* https://tutorials.blog.crabberspost.com/2022/03/11/the-usage-of-testcontainers-to-generate-jooq-code-java-sql-and-jooq/
-* https://blog.jooq.org/using-testcontainers-to-generate-jooq-code/
-* https://github.com/jOOQ/jOOQ/tree/main/jOOQ-examples/jOOQ-testcontainers-flyway-example
 
 ## Authentication
 
@@ -153,14 +141,16 @@ http --session=s1 GET :8082/generationRequest
 ```
 
 ```shell
-http --session=s1 POST :8082/generationRequest \
-    requestId="ABCDEFG12345" \
-    generationCount:=200 \
-    duration:=20 \
-    parameters:='["max300=20"]' \
-    mapType="Large" \
-    gameType="Normal" \
-    host="localhost" \
-    userAgent="httpie" \
-    timestamp="2020-01-02T16:29:55.146683937Z"
+http --session=s1 POST :8082/generationRequest
+
+* requestId
+* generationCount
+* duration
+* parameters
+* mapType
+* gameType
+* timestamp
+* host
+* userAgent
+
 ```
