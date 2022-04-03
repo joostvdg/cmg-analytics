@@ -1,33 +1,6 @@
 # cmg-analytics project
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-```
-./mvnw quarkus:dev
-```
-
-## Package and running the application
-
-The application is packageable using `./mvnw package`.
-It produces the executable `cmg-analytics-1.0.0-SNAPSHOT-runner.jar` file in `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
-
-The application is now runnable using `java -jar target/cmg-analytics-1.0.0-SNAPSHOT-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using: `./mvnw package -Pnative`.
-
-Or you can use Docker to build the native executable using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
-
-You can then execute your binary: `./target/cmg-analytics-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image-guide .
+This project is build with Micronaut.
 
 ## Map Generation Requests
 
@@ -154,3 +127,90 @@ http --session=s1 POST :8082/generationRequest
 * userAgent
 
 ```
+
+## Running/Building Locally
+
+### Dev Run
+
+When building locally via a `./mvnw build` or a micronaut run `./mvnw mn:run` you need to have postgres available.
+
+It assumes postgresql is available at `localhost:8432`.
+
+There's a `docker-compose.yml` for running that database.
+
+```shell
+docker-compose up db -d
+./mvnw mn:run
+```
+
+### Local Build/Test
+
+It is now using Test Containers, which will use a local docker daemon to spin up postgresql up for you.
+We use `flyway` to configure the database and then generate the JOOQ sources via the database.
+To ensure a proper order, we have a custom script via the Groovy Maven plugin. 
+This is copied from here: https://github.com/testcontainers/testcontainers-java/issues/4397
+
+```xml
+<plugin>
+    <groupId>org.codehaus.gmaven</groupId>
+    <artifactId>groovy-maven-plugin</artifactId>
+    <version>2.1.1</version>
+    <executions>
+      <execution>
+        <phase>initialize</phase>
+        <goals>
+          <goal>execute</goal>
+        </goals>
+        <configuration>
+          <source>
+            db = new org.testcontainers.containers.PostgreSQLContainer("postgres:12")
+                    .withUsername("${db.username}")
+                    .withDatabaseName("cmg")
+                    .withPassword("${db.password}");
+            db.start();
+            project.properties.setProperty('db.url', db.getJdbcUrl());
+          </source>
+        </configuration>
+      </execution>
+    </executions>
+    <dependencies>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.1</version>
+      </dependency>
+    </dependencies>
+</plugin>
+```
+
+### Multi-arch Multi-stage Native Build with Test Containers
+
+Building a Native Graal Image is cumbersome and can require get some local setup.
+We can also do so via Docker Multi-stage build, so can skip the setup.
+
+Unfortunately, once you run such a build, you don't have a docker daemon to talk to.
+In order to have this re-usable in other places, such as Kubernetes, we run a Docker DIND container.
+
+```shell
+docker run --rm --tty --name dockerdind -p 2375:2375 -e DOCKER_TLS_CERTDIR='' --privileged docker:20.10.13-dind  
+```
+
+We need the IP of this container, so our multi-stage build can talk to the daemon.
+
+```shell
+export DIND_IP=$(docker inspect dockerdind --format='{{.NetworkSettings.Networks.bridge.IPAddress}}')
+```
+
+We can then issue a multi-arch multi-stage build:
+
+```shell
+docker buildx build . --platform linux/amd64,linux/arm64 --tag caladreas/cmg-analytics:0.2.12 --file Dockerfile.multi-stage --build-arg DIND_IP="${DIND_IP}" --push
+```
+
+Sometimes this fails. 
+The only solution I've seen so far, is to first build the `--platform linux/amd64` version, then build both again.
